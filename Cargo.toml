@@ -21,6 +21,11 @@ description = "Rust FFI bindings for the Assimp library"
 readme = "README.md"
 license = "MIT"
 repository = "https://github.com/Eljay/assimp-sys"
+edition = "2018"
+
+[build-dependencies]
+bindgen = "0.54"
+
 [dependencies.bitflags]
 version = "0.9"
 [build-dependencies.cmake]
