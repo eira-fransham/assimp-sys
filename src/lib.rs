@@ -3,4 +3,6 @@
 #![allow(non_snake_case)]
 #![allow(improper_ctypes)]
 
+extern crate libz_sys;
+
 include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
