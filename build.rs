@@ -114,13 +114,16 @@ fn main() {
         .derive_hash(true)
         .derive_debug(true);
 
-    for path in include_paths {
+    for path in dbg!(include_paths) {
         bindings = bindings.clang_args(&["-F", &path]);
     }
 
-    let bindings = bindings.generate().expect("Unable to generate bindings");
-
     let out_path = std::path::PathBuf::from(env::var_os("OUT_DIR").unwrap());
+    let bindings = bindings
+        .clang_args(&["-F", out_path.join("include").to_str().unwrap()])
+        .generate()
+        .expect("Unable to generate bindings");
+
     let bindings_path = out_path.join("bindings.rs");
     bindings
         .write_to_file(&bindings_path)
