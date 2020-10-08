@@ -44,17 +44,16 @@ fn main() {
                 .define("BUILD_SHARED_LIBS", "OFF")
                 .define("LIBRARY_SUFFIX", "")
                 .define("CMAKE_SUPPRESS_DEVELOPER_WARNINGS", "ON")
-                // GCC doesn't work here, Assimp explicitly sets `-Werror` but
-                // GCC emits some warnings that clang doesn't, setting `-Wno-error`
-                // doesn't work because Assimp's cmake script adds `-Werror` _after_
-                // our CFLAGS (even with `CMAKE_SUPPRESS_DEVELOPER_WARNINGS=ON`).
-                //
-                // When will C/C++ devs stop setting `-Werror` without a way to disable
-                // it.
                 .define("CMAKE_C_COMPILER", "clang")
                 // For some reason, using `.pic(true)` doesn't work here, only
                 // specifically setting it in CFLAGS
-                .define("CMAKE_C_FLAGS", "-fPIC")
+                //
+                // Also, we have to be really explicit with `-Wno-error=..` since Assimp
+                // adds our CFLAGS _after_ theirs, with no way of disabling it (despite
+                // what their `Build.md` might tell you. When will C/C++ devs stop setting
+                // `-Werror` without a way to disable it.
+                .define("CMAKE_C_FLAGS", "-fPIC -Wno-error=all -Wno-error=pedantic")
+                .define("CMAKE_CXX_FLAGS", "-fPIC -Wno-error=all -Wno-error=pedantic")
                 .uses_cxx11()
                 .build();
 
@@ -114,7 +113,7 @@ fn main() {
         .derive_hash(true)
         .derive_debug(true);
 
-    for path in dbg!(include_paths) {
+    for path in include_paths {
         bindings = bindings.clang_args(&["-F", &path]);
     }
 
